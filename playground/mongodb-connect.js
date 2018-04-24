@@ -7,7 +7,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, client) => {
     console.log('Connected to mongodb server')
     const db = client.db('TodoApp')
 
-    /*db.collection('Todos').insertOne({
+    db.collection('Todos').insertOne({
         text: 'Something to do',
         completed: false
     }, (err, result) => {
@@ -16,7 +16,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, client) => {
         }
         console.log(JSON.stringify(result.ops, undefined, 2))
     })
-
+    /*
     db.collection('Users').insertOne({
         name: 'Marcin',
         age: 17,
