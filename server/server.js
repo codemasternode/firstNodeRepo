@@ -1,23 +1,25 @@
-const _ = require('lodash')
-const express = require('express')
-const bodyParser = require('body-parser')
+const _ = require('lodash') //Lodash jest niskopoziomową biblioteką JavaScript służącą do obróbki danych, jej algorytmy są bardzo zoptymalizowane
+const express = require('express') //Express to biblioteka służąca do postawienia serwera z routingiem itp.
+const bodyParser = require('body-parser') //'rozpakowuje' dane pochodzące z żądania, używamy go jako middleware
 
-const { ObjectID } = require('mongodb')
-var { mongoose } = require('./db/mongoose')
-var { Todo } = require('./models/todo')
-var { User } = require('./models/user')
-var { authenticate } = require('../middleweare/authentication')
+const { ObjectID } = require('mongodb') //import klasy odpowiedzialnej za prawidłowe operacje na polach typu ID
+var { mongoose } = require('./db/mongoose') //Tutaj realizowane jest połączenie z bazą danych
+var { Todo } = require('./models/todo') //To jest model Todo
+var { User } = require('./models/user') //To jest model User
+var { authenticate } = require('../middleweare/authentication') 
 
 var app = express()
 const port = process.env.PORT || 3000;
 app.use(bodyParser.json())
 
 app.post('/todos', (req, res) => {
+    //Tworzenie nowego obiektu i przypisywanie mu wartości pochodzących z żądania
     var todo = new Todo({
         text: req.body.text
-    })
+    })                  
 
     todo.save().then((doc) => {
+        console.log(doc)
         res.send(doc)
     }, (e) => {
         res.status(400).send(e)
@@ -36,19 +38,20 @@ app.get('/todos', (req, res) => {
 app.get('/todos/:id', (req, res) => {
     var id = req.params.id
 
+    //sprawdzamy czy id które zostało podane w żądaniu jest odpowiednie
     if (!ObjectID.isValid(id)) {
         return res.status(404).send({
             error: 'Id is not valid'
         })
     }
 
+    //Wbudowana metoda szukająca po id
     Todo.findById(id).then((todo) => {
         if (!todo) {
             return res.status(404).send({ error: 'Todo with this id doesn t exist' })
         }
         res.send(todo);
     }).catch((e) => {
-        console.log(e)
         return res.send('Error' + e).status(500)
     })
 
